@@ -91,11 +91,8 @@ def moving_copy_to_target(model, target, tau=0.95):
 def copy_shared_grads(model, shared_model, counter):
 	for param, shared_param in zip(model.parameters(),
                                    shared_model.parameters()):
-		#if shared_param.grad is not None:
-		#	return
 		if param.grad is not None:
 			shared_param.grad = (param.grad.clone())
-		#print(counter.value)
 
 def train(rank, shared_model, target_model, counter, lock, args, optimizer):
     #根据A3C paper 每个进程有自己的env
