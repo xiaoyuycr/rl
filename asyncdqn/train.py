@@ -10,13 +10,9 @@ import torch.optim as optim
 import torch.multiprocessing as mp
 from torch.nn import init
 from torch.autograd import Variable
-from torchvision.transforms import transforms
 from keras.utils import to_categorical
-#from asyncrmsprop import AsyncRMSprop
-from asyncadam import AsyncAdam
 
 gamma = 0.95
-lr = 0.001
 max_expor = 1.
 min_expor = 0
 target_update_freq = 8000

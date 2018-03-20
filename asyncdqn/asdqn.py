@@ -1,15 +1,16 @@
-from train import *
+import gym
 import torch
 import torch.multiprocessing as mp
 from collections import namedtuple
-import gym
 from my_optim import AsyncRMSprop
+from train import *
 
 counter = mp.Value('i', 1)
 lock = mp.Lock()
-save, dueling = True, False
+save, dueling = True, True
+lr = 0.001
 arg_list = namedtuple('args', 'lr gamma seed save dueling')
-seed = 1024
+seed = 1
 q_args = arg_list(lr, gamma, seed, save, dueling)
 processes = []
 num_process = 8
@@ -27,8 +28,7 @@ if __name__ == '__main__':
     shared_q_model = QModel(state_space, nb_action, dueling)
     shared_q_model.share_memory()
     shared_q_model.train()
-    processes.clear()
-    optimizer = AsyncRMSprop(shared_q_model.parameters(), lr=0.001)
+    optimizer = AsyncRMSprop(shared_q_model.parameters(), lr=lr)
     for rank in range(num_process):
         p = mp.Process(
             target=train,
@@ -37,6 +37,5 @@ if __name__ == '__main__':
         processes.append(p)
     for p in processes:
         p.join()
-	#save model
     if save:
         torch.save(shared_q_model.state_dict(), open('asdqn.pkl', 'wb'))
